@@ -16,7 +16,7 @@ public class Main {
         UserProfile userProfile = new UserProfile(userName);
         System.out.println("Hello, " + userProfile.getName() + "!");
 
-        // Main Menu Loop
+
         boolean exit = false;
 
         while (!exit) {
@@ -31,11 +31,11 @@ public class Main {
             int choice = -1;
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                scanner.nextLine();
             } else {
                 System.out.println("Invalid input. Please enter a number between 1 and 5.");
-                scanner.nextLine(); // Clear invalid input
-                continue; // Restart the loop for valid input
+                scanner.nextLine();
+                continue;
             }
 
             switch (choice) {
@@ -123,7 +123,7 @@ public class Main {
                         System.out.println((i + 1) + ". " + userProfile.getFavorites().get(i));
                     }
 
-                    // Choose a favorite pizza to reorder
+
                     System.out.println("\nEnter the number of the pizza you want to reorder: ");
                     pizzaChoice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
@@ -234,7 +234,6 @@ public class Main {
         Pizza.PizzaBuilder builder = new Pizza.PizzaBuilder();
         builder.setName(selectedPizzaName);
 
-        // Size selection with validation
         System.out.println("Select your pizza size (1. Small - $8, 2. Medium - $10, 3. Large - $12): ");
         int sizeChoice;
         while (true) {
@@ -284,7 +283,7 @@ public class Main {
                 }
             }
         }
-        // Crust selection with "None" option and validation
+
         System.out.println("Choose your crust: (1. Thin Crust - $2, 2. Thick Crust - $2.5, 3. Stuffed Crust - $3, 4. None): ");
         int crustChoice;
         while (true) {
@@ -305,7 +304,7 @@ public class Main {
             case 4 -> builder.setCrust("None");
         }
 
-        // Sauce selection with "None" option and validation
+
         System.out.println("Choose your sauce: (1. Tomato - $0, 2. Alfredo - $1, 3. Pesto - $1.50, 4. None): ");
         int sauceChoice;
         while (true) {
@@ -339,7 +338,7 @@ public class Main {
             default -> 0.0;
         };
 
-        // Cheese selection with "None" option and validation
+
         System.out.println("Choose your cheese: (1. Mozzarella - $0, 2. Cheddar - $0.5, 3. Parmesan - $1, 4. None): ");
         int cheeseChoice;
         while (true) {
@@ -385,7 +384,7 @@ public class Main {
         System.out.println("How many pizzas would you like to order?");
         int quantity = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-        double totalPrice = 20.0 * quantity;  // Example pricing, adjust according to your customization
+        double totalPrice = 20.0 * quantity;
 
         // Step 3: Delivery or Pickup
         System.out.println("Would you like Pickup or Delivery? (Pickup / Delivery): ");
@@ -420,7 +419,7 @@ public class Main {
         // Apply loyalty points
         paymentMethod.applyLoyaltyPoints(userProfile, totalPrice);
 
-        // Step 7: Redeem loyalty points
+        // Step 5: Redeem loyalty points
         System.out.println("You have earned " + userProfile.getLoyaltyPoints() + " loyalty points!");
         System.out.println("Do you want to redeem loyalty points? (yes/no): ");
         String redeemChoice = scanner.nextLine();
@@ -455,7 +454,7 @@ public class Main {
         }
 
 
-        // Step 8: Order Tracking
+        // Step 6: Order Tracking
         OrderTracker tracker = new OrderTracker();
         tracker.attach(new Customer(userProfile.getName()));
         tracker.setState("Order placed.");
@@ -505,7 +504,7 @@ public class Main {
         while (true) {
             System.out.print("Please rate your experience (1-5): ");
             rating = scanner.nextDouble();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
             if (rating >= 1 && rating <= 5) {
                 break;
             }
