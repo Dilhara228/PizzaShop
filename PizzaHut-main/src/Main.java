@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -14,6 +15,97 @@ public class Main {
         UserProfile userProfile = new UserProfile(userName);
         System.out.println("Hello, " + userProfile.getName() + "!");
 
+        // Main Menu Loop
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\nPlease choose an option:");
+            System.out.println("1. User Profiles and Favorites");
+            System.out.println("2. Pizza Customization");
+            System.out.println("3. Seasonal Specials and Promotions");
+            System.out.println("4. Feedback and Ratings");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            switch (choice) {
+                case 1:
+                    // User Profiles and Favorites
+                    handleUserProfileAndFavorites(scanner, userProfile);
+                    break;
+                case 2:
+                    // Pizza Customization
+                    handlePizzaCustomization(scanner, userProfile);
+                    break;
+                case 3:
+                    // Seasonal Specials and Promotions
+                    handleSeasonalSpecialsAndPromotions(scanner);
+                    break;
+                case 4:
+                    // Feedback and Ratings
+                    handleFeedbackAndRatings(scanner);
+                    break;
+                case 5:
+                    // Exit
+                    System.out.println("Thank you for visiting the Pizza Shop!");
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void handleUserProfileAndFavorites(Scanner scanner, UserProfile userProfile) {
+        System.out.println("\nUser Profile and Favorites:");
+
+        // Display User Profile
+        System.out.println("Profile Name: " + userProfile.getName());
+
+        // Display Favorites
+        if (userProfile.getFavorites().isEmpty()) {
+            System.out.println("You have no favorite pizzas yet.");
+        } else {
+            System.out.println("Your favorite pizzas: ");
+            for (String favorite : userProfile.getFavorites()) {
+                System.out.println("- " + favorite);
+            }
+        }
+
+        // Add to Favorites
+        System.out.println("\nWould you like to add a pizza to your favorites? (yes/no): ");
+        String addToFavorites = scanner.nextLine();
+        if (addToFavorites.equalsIgnoreCase("yes")) {
+            // Display current favorite pizzas
+            if (userProfile.getFavorites().isEmpty()) {
+                System.out.println("You have no favorite pizzas yet.");
+            } else {
+                System.out.println("Your current favorite pizzas are:");
+                for (String favoritePizza : userProfile.getFavorites()) {
+                    System.out.println("- " + favoritePizza);
+                }
+            }
+
+            // Ask the user for the pizza they want to add
+            System.out.println("\nEnter the name of the pizza you want to add to favorites: ");
+            String pizzaName = scanner.nextLine();
+
+            // Check if the pizza is already in favorites
+            if (!userProfile.getFavorites().contains(pizzaName)) {
+                userProfile.addFavorite(pizzaName);
+                System.out.println(pizzaName + " has been added to your favorites.");
+            } else {
+                System.out.println(pizzaName + " is already in your favorites.");
+            }
+        }
+    }
+
+    private static void handlePizzaCustomization(Scanner scanner, UserProfile userProfile) throws InterruptedException {
+        System.out.println("\nLet's customize your pizza!");
+
         // Step 1: Pizza Selection
         System.out.println("Please choose a pizza name from the following list:");
         String[] availablePizzas = {
@@ -24,7 +116,6 @@ public class Main {
                 "Mushroom Delight"
         };
 
-
         for (int i = 0; i < availablePizzas.length; i++) {
             System.out.println((i + 1) + ". " + availablePizzas[i]);
         }
@@ -33,8 +124,6 @@ public class Main {
         scanner.nextLine(); // Consume newline
         String selectedPizzaName = availablePizzas[pizzaChoice - 1];
         System.out.println("You chose: " + selectedPizzaName);
-
-
 
         // Step 2: Pizza Customization
         Pizza.PizzaBuilder builder = new Pizza.PizzaBuilder();
@@ -134,14 +223,13 @@ public class Main {
         Pizza pizza = builder.build();
 
 
-
-        // Step 3: Quantity Selection
+        // Step 2: Quantity Selection
         System.out.println("How many pizzas would you like to order?");
         int quantity = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-        double totalPrice = pizza.getBasePrice() * quantity;
+        double totalPrice = 20.0 * quantity;  // Example pricing, adjust according to your customization
 
-        // Step 4: Delivery or Pickup
+        // Step 3: Delivery or Pickup
         System.out.println("Would you like Pickup or Delivery? (Pickup / Delivery): ");
         String orderType = scanner.nextLine();
         String deliveryAddress = "", phoneNumber = "";
@@ -152,11 +240,10 @@ public class Main {
             phoneNumber = scanner.nextLine();
         }
 
-        // Step 5: Order Review
+        // Step 4: Order Review
         System.out.println("\n========== Order Review ==========");
         System.out.println("Customer: " + userProfile.getName());
-        System.out.println("Pizza Name: " + pizza.getName());
-        System.out.println("Pizza Details: " + pizza.getDetails());
+        System.out.println("Pizza Name: " + selectedPizzaName);
         System.out.println("Quantity: " + quantity);
         if (orderType.equalsIgnoreCase("Delivery")) {
             System.out.println("Delivery Address: " + deliveryAddress);
@@ -164,42 +251,14 @@ public class Main {
         }
         System.out.println("Total Amount: $" + totalPrice);
 
-        // Step 6: Payment
+        // Step 5: Payment
         System.out.println("Choose payment method (1. Credit Card, 2. Digital Wallet): ");
         int paymentChoice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
         PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
         paymentMethod.pay(totalPrice);
 
-        // Apply loyalty points
-        paymentMethod.applyLoyaltyPoints(userProfile, totalPrice);
-
-        // Step 7: Redeem loyalty points
-        System.out.println("You have earned " + userProfile.getLoyaltyPoints() + " loyalty points!");
-        System.out.println("Do you want to redeem loyalty points? (yes/no): ");
-        String redeemChoice = scanner.nextLine();
-        if (redeemChoice.equalsIgnoreCase("yes")) {
-            if (userProfile.getLoyaltyPoints() >= 10) {
-                System.out.println("You have redeemed 10 loyalty points for a free topping!");
-                userProfile.redeemLoyaltyPoints(10);
-
-                // Free topping redemption
-                System.out.println("Choose your free topping (1. Pepperoni, 2. Mushrooms, 3. Olives, 4. Bell Peppers): ");
-                int freeToppingChoice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-                switch (freeToppingChoice) {
-                    case 1: builder.addTopping("Pepperoni"); break;
-                    case 2: builder.addTopping("Mushrooms"); break;
-                    case 3: builder.addTopping("Olives"); break;
-                    case 4: builder.addTopping("Bell Peppers"); break;
-                    default: System.out.println("Invalid choice. No topping added.");
-                }
-            } else {
-                System.out.println("Sorry, you need at least 10 loyalty points to redeem for a free topping.");
-            }
-        }
-
-        // Step 8: Order Tracking
+        // Step 6: Order Tracking
         OrderTracker tracker = new OrderTracker();
         tracker.attach(new Customer(userProfile.getName()));
         tracker.setState("Order placed.");
@@ -221,9 +280,40 @@ public class Main {
             System.out.println("Delivery Address: " + deliveryAddress);
             System.out.println("Phone Number: " + phoneNumber);
         }
-        System.out.println("Order Details: " + pizza.getDetails());
         System.out.println("Total Amount: $" + totalPrice);
 
-        scanner.close();
+        }
+
+    private static void handleSeasonalSpecialsAndPromotions(Scanner scanner) {
+        System.out.println("\nSeasonal Specials and Promotions:");
+        // Example promotional offers
+        System.out.println("Current Special: 20% off on all Large Pizzas!");
+        System.out.println("Would you like to apply this promotion to your order? (yes/no): ");
+        String applyPromotion = scanner.nextLine();
+        if (applyPromotion.equalsIgnoreCase("yes")) {
+            System.out.println("Promotion applied! 20% off on your next large pizza.");
+        } else {
+            System.out.println("No promotion applied.");
+        }
+    }
+
+    private static void handleFeedbackAndRatings(Scanner scanner) {
+        System.out.println("\nFeedback and Ratings:");
+        System.out.println("Please rate your experience (1-5): ");
+        int rating = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        if (rating < 1 || rating > 5) {
+            System.out.println("Invalid rating. Please provide a rating between 1 and 5.");
+        } else {
+            System.out.println("Thank you for your feedback! You rated us: " + rating + " stars.");
+            System.out.println("Would you like to leave additional comments? (yes/no): ");
+            String additionalComments = scanner.nextLine();
+            if (additionalComments.equalsIgnoreCase("yes")) {
+                System.out.println("Please enter your comments: ");
+                String comments = scanner.nextLine();
+                System.out.println("Thank you for your comments: " + comments);
+            }
+
+        }
     }
 }

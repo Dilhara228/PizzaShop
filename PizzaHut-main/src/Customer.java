@@ -1,12 +1,12 @@
-class Customer implements Observer {
-    private String name;
+public class Customer implements Observer {
+    private String customerName;
 
-    public Customer(String name) {
-        this.name = name;
+    public Customer(String customerName) {
+        this.customerName = customerName;
     }
 
     @Override
     public void update(String state) {
-        System.out.println(name + ", your order status is now: " + state);
+        System.out.println("Order update for " + customerName + ": Your order status has changed.");
     }
 }

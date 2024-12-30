@@ -2,30 +2,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pizza {
-    private String name; // Name of the pizza
+    private String name;
     private String size;
+    private List<String> toppings;
     private String crust;
     private String sauce;
     private String cheese;
-    private List<String> toppings;
     private double basePrice;
+    private List<Feedback> feedbackList;  // List to store feedback
 
-    public Pizza(String name, String size, String crust, String sauce, String cheese, List<String> toppings) {
-        this.name = name;
-        this.size = size;
-        this.crust = crust;
-        this.sauce = sauce;
-        this.cheese = cheese;
-        this.toppings = toppings;
-        this.basePrice = calculateBasePrice();
+    // Private constructor, called by the PizzaBuilder
+    private Pizza(PizzaBuilder builder) {
+        this.name = builder.name;
+        this.size = builder.size;
+        this.toppings = builder.toppings;
+        this.crust = builder.crust;
+        this.sauce = builder.sauce;
+        this.cheese = builder.cheese;
+        this.basePrice = builder.basePrice;
+        this.feedbackList = builder.feedbackList;  // Initialize feedback list
     }
 
+    // Getters for each field
     public String getName() {
         return name;
     }
 
     public String getSize() {
         return size;
+    }
+
+    public List<String> getToppings() {
+        return toppings;
     }
 
     public String getCrust() {
@@ -40,43 +48,48 @@ public class Pizza {
         return cheese;
     }
 
-    public List<String> getToppings() {
-        return toppings;
-    }
-
     public double getBasePrice() {
         return basePrice;
     }
 
-    // Calculate price based on the pizza size
-    private double calculateBasePrice() {
-        switch (size) {
-            case "Small": return 8.0;
-            case "Medium": return 10.0;
-            case "Large": return 12.0;
-            default: return 10.0;
+    public List<Feedback> getFeedbackList() {
+        return feedbackList;
+    }
+
+    // Method to add feedback
+    public void addFeedback(Feedback feedback) {
+        feedbackList.add(feedback);
+    }
+
+    // Method to calculate average rating
+    public double calculateAverageRating() {
+        if (feedbackList.isEmpty()) {
+            return 0.0;
         }
+        double total = 0;
+        for (Feedback feedback : feedbackList) {
+            total += feedback.getRating();
+        }
+        return total / feedbackList.size();
     }
 
-    // Returns the details of the pizza as a string
+    // Method to display pizza details along with average rating
     public String getDetails() {
-        return "Size: " + size + ", Crust: " + crust + ", Sauce: " + sauce +
-                ", Cheese: " + cheese + ", Toppings: " + String.join(", ", toppings) +
-                " | Base Price: $" + basePrice;
+        return "Name: " + name + ", Size: " + size + ", Crust: " + crust + ", Sauce: " + sauce + ", Cheese: " + cheese + ", Toppings: " + String.join(", ", toppings) + ", Average Rating: " + calculateAverageRating() + " stars";
     }
 
+    // Static inner class for PizzaBuilder
     public static class PizzaBuilder {
         private String name;
         private String size;
+        private List<String> toppings = new ArrayList<>();
         private String crust;
         private String sauce;
         private String cheese;
-        private List<String> toppings;
+        private double basePrice;
+        private List<Feedback> feedbackList = new ArrayList<>();  // Initialize feedback list
 
-        public PizzaBuilder() {
-            this.toppings = new ArrayList<>();
-        }
-
+        // Setters for builder pattern
         public PizzaBuilder setName(String name) {
             this.name = name;
             return this;
@@ -84,6 +97,12 @@ public class Pizza {
 
         public PizzaBuilder setSize(String size) {
             this.size = size;
+            setBasePriceBasedOnSize(size);
+            return this;
+        }
+
+        public PizzaBuilder addTopping(String topping) {
+            this.toppings.add(topping);
             return this;
         }
 
@@ -102,13 +121,57 @@ public class Pizza {
             return this;
         }
 
-        public PizzaBuilder addTopping(String topping) {
-            this.toppings.add(topping);
-            return this;
+        // Method to set base price based on pizza size
+        private void setBasePriceBasedOnSize(String size) {
+            switch (size) {
+                case "Small":
+                    this.basePrice = 8.0;
+                    break;
+                case "Medium":
+                    this.basePrice = 10.0;
+                    break;
+                case "Large":
+                    this.basePrice = 12.0;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid size: " + size);
+            }
         }
 
+        // Build method to create a Pizza object
         public Pizza build() {
-            return new Pizza(name, size, crust, sauce, cheese, toppings);
+            return new Pizza(this);
+        }
+    }
+
+    // Feedback class to represent customer feedback and ratings
+    public static class Feedback {
+        private String customerName;
+        private double rating;  // Rating out of 5
+        private String comments;
+
+        public Feedback(String customerName, double rating, String comments) {
+            this.customerName = customerName;
+            this.rating = rating;
+            this.comments = comments;
+        }
+
+        // Getters for feedback details
+        public String getCustomerName() {
+            return customerName;
+        }
+
+        public double getRating() {
+            return rating;
+        }
+
+        public String getComments() {
+            return comments;
+        }
+
+        @Override
+        public String toString() {
+            return "Customer: " + customerName + ", Rating: " + rating + " stars, Comments: " + comments;
         }
     }
 }
