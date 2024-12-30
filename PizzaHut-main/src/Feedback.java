@@ -28,5 +28,6 @@ public class Feedback {
     }
 
     public void submit() {
+        System.out.println("Feedback submitted successfully!");
     }
 }
