@@ -79,27 +79,26 @@ public class Main {
         System.out.println("\nWould you like to add a pizza to your favorites? (yes/no): ");
         String addToFavorites = scanner.nextLine();
         if (addToFavorites.equalsIgnoreCase("yes")) {
-            // Display current favorite pizzas
-            if (userProfile.getFavorites().isEmpty()) {
-                System.out.println("You have no favorite pizzas yet.");
+            // Display available pizzas for selection
+            String[] availablePizzas = {"Margherita", "Pepperoni", "Veggie Supreme", "BBQ Chicken", "Mushroom Delight"};
+            System.out.println("\nChoose a pizza from the following list to add to your favorites:");
+            for (int i = 0; i < availablePizzas.length; i++) {
+                System.out.println((i + 1) + ". " + availablePizzas[i]);
+            }
+            System.out.print("Enter the number corresponding to your choice: ");
+            int pizzaChoice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            String selectedPizza = availablePizzas[pizzaChoice - 1];
+
+            // Add to favorites
+            if (!userProfile.getFavorites().contains(selectedPizza)) {
+                userProfile.addFavorite(selectedPizza);
+                System.out.println(selectedPizza + " has been added to your favorites.");
             } else {
-                System.out.println("Your current favorite pizzas are:");
-                for (String favoritePizza : userProfile.getFavorites()) {
-                    System.out.println("- " + favoritePizza);
-                }
+                System.out.println(selectedPizza + " is already in your favorites.");
             }
 
-            // Ask the user for the pizza they want to add
-            System.out.println("\nEnter the name of the pizza you want to add to favorites: ");
-            String pizzaName = scanner.nextLine();
 
-            // Check if the pizza is already in favorites
-            if (!userProfile.getFavorites().contains(pizzaName)) {
-                userProfile.addFavorite(pizzaName);
-                System.out.println(pizzaName + " has been added to your favorites.");
-            } else {
-                System.out.println(pizzaName + " is already in your favorites.");
-            }
             // Reorder a favorite pizza
             System.out.println("\nWould you like to reorder a favorite pizza? (yes/no): ");
             String reorderFavorite = scanner.nextLine();
@@ -115,7 +114,7 @@ public class Main {
 
                     // Choose a favorite pizza to reorder
                     System.out.println("\nEnter the number of the pizza you want to reorder: ");
-                    int pizzaChoice = scanner.nextInt();
+                    pizzaChoice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
                     if (pizzaChoice > 0 && pizzaChoice <= userProfile.getFavorites().size()) {
                         String chosenPizza = userProfile.getFavorites().get(pizzaChoice - 1);
@@ -191,18 +190,21 @@ public class Main {
         System.out.println("\nLet's customize your pizza!");
 
         // Step 1: Pizza Selection
-        System.out.println("Please choose a pizza name from the following list:");
-        String[] availablePizzas = {
-                "Margherita",
-                "Pepperoni",
-                "Veggie Supreme",
-                "BBQ Chicken",
-                "Mushroom Delight"
-        };
+            System.out.println("Please choose a pizza name from the following list:");
+            String[] availablePizzas = {
+                    "Margherita",
+                    "Pepperoni",
+                    "Veggie Supreme",
+                    "BBQ Chicken",
+                    "Mushroom Delight"
+            };
 
-        for (int i = 0; i < availablePizzas.length; i++) {
-            System.out.println((i + 1) + ". " + availablePizzas[i]);
-        }
+            double[] pizzaPrices = {8.00, 9.50, 10.00, 11.00, 8.50}; // Base prices for each pizza
+
+            for (int i = 0; i < availablePizzas.length; i++) {
+                System.out.println((i + 1) + ". " + availablePizzas[i] + " - $" + pizzaPrices[i]);
+            }
+
         System.out.println("Enter the number corresponding to your pizza choice: ");
         int pizzaChoice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
@@ -349,7 +351,36 @@ public class Main {
         PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
         paymentMethod.pay(totalPrice);
 
-        // Step 8: Order Tracking
+            // Apply loyalty points
+            paymentMethod.applyLoyaltyPoints(userProfile, totalPrice);
+
+            // Step 7: Redeem loyalty points
+            System.out.println("You have earned " + userProfile.getLoyaltyPoints() + " loyalty points!");
+            System.out.println("Do you want to redeem loyalty points? (yes/no): ");
+            String redeemChoice = scanner.nextLine();
+            if (redeemChoice.equalsIgnoreCase("yes")) {
+                if (userProfile.getLoyaltyPoints() >= 10) {
+                    System.out.println("You have redeemed 10 loyalty points for a free topping!");
+                    userProfile.redeemLoyaltyPoints(10);
+
+                    // Free topping redemption
+                    System.out.println("Choose your free topping (1. Pepperoni, 2. Mushrooms, 3. Olives, 4. Bell Peppers): ");
+                    int freeToppingChoice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    switch (freeToppingChoice) {
+                        case 1: builder.addTopping("Pepperoni"); break;
+                        case 2: builder.addTopping("Mushrooms"); break;
+                        case 3: builder.addTopping("Olives"); break;
+                        case 4: builder.addTopping("Bell Peppers"); break;
+                        default: System.out.println("Invalid choice. No topping added.");
+                    }
+                } else {
+                    System.out.println("Sorry, you need at least 10 loyalty points to redeem for a free topping.");
+                }
+            }
+
+
+            // Step 8: Order Tracking
         OrderTracker tracker = new OrderTracker();
         tracker.attach(new Customer(userProfile.getName()));
         tracker.setState("Order placed.");
