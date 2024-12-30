@@ -171,6 +171,22 @@ public class Main {
 
                         PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
                         paymentMethod.pay(totalPrice);
+
+                        // Step 6: Order Tracking
+
+                        System.out.println("\n========== Order Tracking ==========");
+                        OrderTracker tracker = new OrderTracker();
+                        tracker.attach(new Customer(userProfile.getName()));
+                        tracker.setState("Order placed.");
+                        Thread.sleep(2000);
+                        tracker.setState("Order is being prepared.");
+                        Thread.sleep(3000);
+                        tracker.setState(orderType.equalsIgnoreCase("Delivery") ? "Order is out for delivery." : "Order is ready for pickup.");
+                        Thread.sleep(2000);
+                        System.out.println("\n====================================");
+
+
+
                         // Invoice generation
                         System.out.println("\n========== INVOICE ==========");
                         String orderId = UUID.randomUUID().toString();
