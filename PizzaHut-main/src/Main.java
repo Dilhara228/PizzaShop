@@ -222,6 +222,12 @@ public class Main {
 
         Pizza pizza = builder.build();
 
+        // Prompt the user to name their custom pizza
+        System.out.print("Enter a name for your custom pizza: ");
+        String pizzaName = scanner.nextLine();
+        builder.setName(pizzaName); // Set the pizza name in the builder
+
+
 
         // Step 2: Quantity Selection
         System.out.println("How many pizzas would you like to order?");
@@ -250,6 +256,7 @@ public class Main {
             System.out.println("Phone Number: " + phoneNumber);
         }
         System.out.println("Total Amount: $" + totalPrice);
+        System.out.println("\n======================");
 
         // Step 5: Payment
         System.out.println("Choose payment method (1. Credit Card, 2. Digital Wallet): ");
@@ -258,7 +265,7 @@ public class Main {
         PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
         paymentMethod.pay(totalPrice);
 
-        // Step 6: Order Tracking
+        // Step 8: Order Tracking
         OrderTracker tracker = new OrderTracker();
         tracker.attach(new Customer(userProfile.getName()));
         tracker.setState("Order placed.");
@@ -267,6 +274,7 @@ public class Main {
         Thread.sleep(3000);
         tracker.setState(orderType.equalsIgnoreCase("Delivery") ? "Order is out for delivery." : "Order is ready for pickup.");
         Thread.sleep(2000);
+
 
         // Invoice
         String orderId = UUID.randomUUID().toString();

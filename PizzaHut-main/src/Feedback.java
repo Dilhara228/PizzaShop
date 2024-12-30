@@ -19,7 +19,7 @@ public class Feedback {
     }
 
     public String getComments() {
-        return comments;
+        return null;
     }
 
     @Override
