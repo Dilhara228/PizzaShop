@@ -7,6 +7,6 @@ public class Customer implements Observer {
 
     @Override
     public void update(String state) {
-        System.out.println("Order update for " + customerName + ": Your order status has changed.");
+        System.out.println("Notification for " + customerName + ": " + state);
     }
 }
