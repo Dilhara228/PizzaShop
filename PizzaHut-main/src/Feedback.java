@@ -9,7 +9,7 @@ public class Feedback {
         this.comments = comments;
     }
 
-    // Getters for feedback details
+    // Getters
     public String getCustomerName() {
         return customerName;
     }
@@ -19,7 +19,7 @@ public class Feedback {
     }
 
     public String getComments() {
-        return null;
+        return comments;
     }
 
     @Override

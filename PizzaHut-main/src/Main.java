@@ -1,10 +1,11 @@
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
-import java.util.UUID;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
+
+    private static List<Feedback> feedbackList = new ArrayList<>();
+
+
     public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
 
@@ -194,192 +195,190 @@ public class Main {
     }
 
 
+    private static void handlePizzaCustomization(Scanner scanner, UserProfile userProfile) throws InterruptedException {
+        System.out.println("\nLet's customize your pizza!");
 
-        private static void handlePizzaCustomization(Scanner scanner, UserProfile userProfile) throws InterruptedException {
-            System.out.println("\nLet's customize your pizza!");
+        // Step 1: Pizza Selection
+        System.out.println("Please choose a pizza name from the following list:");
+        String[] availablePizzas = {
+                "Margherita",
+                "Pepperoni",
+                "Veggie Supreme",
+                "BBQ Chicken",
+                "Mushroom Delight"
+        };
 
-// Step 1: Pizza Selection
-            System.out.println("Please choose a pizza name from the following list:");
-            String[] availablePizzas = {
-                    "Margherita",
-                    "Pepperoni",
-                    "Veggie Supreme",
-                    "BBQ Chicken",
-                    "Mushroom Delight"
-            };
+        double[] pizzaPrices = {8.00, 9.50, 10.00, 11.00, 8.50}; // Base prices for each pizza
 
-            double[] pizzaPrices = {8.00, 9.50, 10.00, 11.00, 8.50}; // Base prices for each pizza
+        for (int i = 0; i < availablePizzas.length; i++) {
+            System.out.println((i + 1) + ". " + availablePizzas[i] + " - $" + pizzaPrices[i]);
+        }
 
-            for (int i = 0; i < availablePizzas.length; i++) {
-                System.out.println((i + 1) + ". " + availablePizzas[i] + " - $" + pizzaPrices[i]);
-            }
-
-            int pizzaChoice;
-            while (true) {
-                System.out.println("Enter the number corresponding to your pizza choice: ");
-                if (scanner.hasNextInt()) {
-                    pizzaChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    if (pizzaChoice >= 1 && pizzaChoice <= availablePizzas.length) {
-                        break;
-                    }
-                }
-                System.out.println("Invalid choice. Please enter a number between 1 and " + availablePizzas.length + ".");
-                scanner.nextLine(); // Clear invalid input
-            }
-            String selectedPizzaName = availablePizzas[pizzaChoice - 1];
-            System.out.println("You chose: " + selectedPizzaName);
-
-// Step 2: Pizza Customization
-            Pizza.PizzaBuilder builder = new Pizza.PizzaBuilder();
-            builder.setName(selectedPizzaName);
-
-// Size selection with validation
-            System.out.println("Select your pizza size (1. Small - $8, 2. Medium - $10, 3. Large - $12): ");
-            int sizeChoice;
-            while (true) {
-                if (scanner.hasNextInt()) {
-                    sizeChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    if (sizeChoice >= 1 && sizeChoice <= 3) {
-                        break;
-                    }
-                }
-                System.out.println("Invalid choice. Please enter a number between 1 and 3.");
-                scanner.nextLine(); // Clear invalid input
-            }
-            switch (sizeChoice) {
-                case 1 -> builder.setSize("Small");
-                case 2 -> builder.setSize("Medium");
-                case 3 -> builder.setSize("Large");
-            }
-
-// Toppings Selection
-            System.out.println("Would you like to customize your pizza with extra toppings? (yes/no): ");
-            String toppingsChoice = scanner.nextLine();
-            if (toppingsChoice.equalsIgnoreCase("yes")) {
-                System.out.println("Available toppings and their prices:");
-                System.out.println("1. Pepperoni - $1.50");
-                System.out.println("2. Mushrooms - $1.00");
-                System.out.println("3. Olives - $1.20");
-                System.out.println("4. Bell Peppers - $1.00");
-                System.out.println("5. Pineapple - $1.50");
-                System.out.println("6. Sausage - $2.00");
-                System.out.println("7. Jalapenos - $1.20");
-                System.out.println("8. Onions - $1.00");
-                System.out.println("Enter topping numbers separated by commas (e.g., 1,3,5): ");
-                String toppingInput = scanner.nextLine();
-                String[] toppingChoices = toppingInput.split(",");
-                for (String topping : toppingChoices) {
-                    switch (topping.trim()) {
-                        case "1" -> builder.addTopping("Pepperoni");
-                        case "2" -> builder.addTopping("Mushrooms");
-                        case "3" -> builder.addTopping("Olives");
-                        case "4" -> builder.addTopping("Bell Peppers");
-                        case "5" -> builder.addTopping("Pineapple");
-                        case "6" -> builder.addTopping("Sausage");
-                        case "7" -> builder.addTopping("Jalapenos");
-                        case "8" -> builder.addTopping("Onions");
-                        default -> System.out.println("Invalid topping choice: " + topping);
-                    }
+        int pizzaChoice;
+        while (true) {
+            System.out.println("Enter the number corresponding to your pizza choice: ");
+            if (scanner.hasNextInt()) {
+                pizzaChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (pizzaChoice >= 1 && pizzaChoice <= availablePizzas.length) {
+                    break;
                 }
             }
-            // Crust selection with "None" option and validation
-            System.out.println("Choose your crust: (1. Thin Crust - $2, 2. Thick Crust - $2.5, 3. Stuffed Crust - $3, 4. None): ");
-            int crustChoice;
-            while (true) {
-                if (scanner.hasNextInt()) {
-                    crustChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    if (crustChoice >= 1 && crustChoice <= 4) {
-                        break;
-                    }
-                }
-                System.out.println("Invalid choice. Please enter a number between 1 and 4.");
-                scanner.nextLine(); // Clear invalid input
-            }
-            switch (crustChoice) {
-                case 1 -> builder.setCrust("Thin Crust");
-                case 2 -> builder.setCrust("Thick Crust");
-                case 3 -> builder.setCrust("Stuffed Crust");
-                case 4 -> builder.setCrust("None");
-            }
+            System.out.println("Invalid choice. Please enter a number between 1 and " + availablePizzas.length + ".");
+            scanner.nextLine(); // Clear invalid input
+        }
+        String selectedPizzaName = availablePizzas[pizzaChoice - 1];
+        System.out.println("You chose: " + selectedPizzaName);
 
-// Sauce selection with "None" option and validation
-            System.out.println("Choose your sauce: (1. Tomato - $0, 2. Alfredo - $1, 3. Pesto - $1.50, 4. None): ");
-            int sauceChoice;
-            while (true) {
-                if (scanner.hasNextInt()) {
-                    sauceChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    if (sauceChoice >= 1 && sauceChoice <= 4) {
-                        break;
-                    }
+        // Step 2: Pizza Customization
+        Pizza.PizzaBuilder builder = new Pizza.PizzaBuilder();
+        builder.setName(selectedPizzaName);
+
+        // Size selection with validation
+        System.out.println("Select your pizza size (1. Small - $8, 2. Medium - $10, 3. Large - $12): ");
+        int sizeChoice;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                sizeChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (sizeChoice >= 1 && sizeChoice <= 3) {
+                    break;
                 }
-                System.out.println("Invalid choice. Please enter a number between 1 and 4.");
-                scanner.nextLine(); // Clear invalid input
             }
-            double basePrice = switch (sauceChoice) {
-                case 1 -> {
-                    builder.setSauce("Tomato");
-                    yield 0.0;
-                }
-                case 2 -> {
-                    builder.setSauce("Alfredo");
-                    yield 1.0;
-                }
-                case 3 -> {
-                    builder.setSauce("Pesto");
-                    yield 1.50;
-                }
-                case 4 -> {
-                    builder.setSauce("None");
-                    yield 0.0;
-                }
-                default -> 0.0;
-            };
+            System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+            scanner.nextLine(); // Clear invalid input
+        }
+        switch (sizeChoice) {
+            case 1 -> builder.setSize("Small");
+            case 2 -> builder.setSize("Medium");
+            case 3 -> builder.setSize("Large");
+        }
 
-// Cheese selection with "None" option and validation
-            System.out.println("Choose your cheese: (1. Mozzarella - $0, 2. Cheddar - $0.5, 3. Parmesan - $1, 4. None): ");
-            int cheeseChoice;
-            while (true) {
-                if (scanner.hasNextInt()) {
-                    cheeseChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    if (cheeseChoice >= 1 && cheeseChoice <= 4) {
-                        break;
-                    }
+        // Toppings Selection
+        System.out.println("Would you like to customize your pizza with extra toppings? (yes/no): ");
+        String toppingsChoice = scanner.nextLine();
+        if (toppingsChoice.equalsIgnoreCase("yes")) {
+            System.out.println("Available toppings and their prices:");
+            System.out.println("1. Pepperoni - $1.50");
+            System.out.println("2. Mushrooms - $1.00");
+            System.out.println("3. Olives - $1.20");
+            System.out.println("4. Bell Peppers - $1.00");
+            System.out.println("5. Pineapple - $1.50");
+            System.out.println("6. Sausage - $2.00");
+            System.out.println("7. Jalapenos - $1.20");
+            System.out.println("8. Onions - $1.00");
+            System.out.println("Enter topping numbers separated by commas (e.g., 1,3,5): ");
+            String toppingInput = scanner.nextLine();
+            String[] toppingChoices = toppingInput.split(",");
+            for (String topping : toppingChoices) {
+                switch (topping.trim()) {
+                    case "1" -> builder.addTopping("Pepperoni");
+                    case "2" -> builder.addTopping("Mushrooms");
+                    case "3" -> builder.addTopping("Olives");
+                    case "4" -> builder.addTopping("Bell Peppers");
+                    case "5" -> builder.addTopping("Pineapple");
+                    case "6" -> builder.addTopping("Sausage");
+                    case "7" -> builder.addTopping("Jalapenos");
+                    case "8" -> builder.addTopping("Onions");
+                    default -> System.out.println("Invalid topping choice: " + topping);
                 }
-                System.out.println("Invalid choice. Please enter a number between 1 and 4.");
-                scanner.nextLine(); // Clear invalid input
             }
-            basePrice += switch (cheeseChoice) {
-                case 1 -> {
-                    builder.setCheese("Mozzarella");
-                    yield 0.0;
+        }
+        // Crust selection with "None" option and validation
+        System.out.println("Choose your crust: (1. Thin Crust - $2, 2. Thick Crust - $2.5, 3. Stuffed Crust - $3, 4. None): ");
+        int crustChoice;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                crustChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (crustChoice >= 1 && crustChoice <= 4) {
+                    break;
                 }
-                case 2 -> {
-                    builder.setCheese("Cheddar");
-                    yield 0.50;
-                }
-                case 3 -> {
-                    builder.setCheese("Parmesan");
-                    yield 1.0;
-                }
-                case 4 -> {
-                    builder.setCheese("None");
-                    yield 0.0;
-                }
-                default -> 0.0;
-            };
+            }
+            System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+            scanner.nextLine(); // Clear invalid input
+        }
+        switch (crustChoice) {
+            case 1 -> builder.setCrust("Thin Crust");
+            case 2 -> builder.setCrust("Thick Crust");
+            case 3 -> builder.setCrust("Stuffed Crust");
+            case 4 -> builder.setCrust("None");
+        }
 
-            Pizza pizza = builder.build();
+        // Sauce selection with "None" option and validation
+        System.out.println("Choose your sauce: (1. Tomato - $0, 2. Alfredo - $1, 3. Pesto - $1.50, 4. None): ");
+        int sauceChoice;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                sauceChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (sauceChoice >= 1 && sauceChoice <= 4) {
+                    break;
+                }
+            }
+            System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+            scanner.nextLine(); // Clear invalid input
+        }
+        double basePrice = switch (sauceChoice) {
+            case 1 -> {
+                builder.setSauce("Tomato");
+                yield 0.0;
+            }
+            case 2 -> {
+                builder.setSauce("Alfredo");
+                yield 1.0;
+            }
+            case 3 -> {
+                builder.setSauce("Pesto");
+                yield 1.50;
+            }
+            case 4 -> {
+                builder.setSauce("None");
+                yield 0.0;
+            }
+            default -> 0.0;
+        };
 
-            // Prompt the user to name their custom pizza
+        // Cheese selection with "None" option and validation
+        System.out.println("Choose your cheese: (1. Mozzarella - $0, 2. Cheddar - $0.5, 3. Parmesan - $1, 4. None): ");
+        int cheeseChoice;
+        while (true) {
+            if (scanner.hasNextInt()) {
+                cheeseChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (cheeseChoice >= 1 && cheeseChoice <= 4) {
+                    break;
+                }
+            }
+            System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+            scanner.nextLine(); // Clear invalid input
+        }
+        basePrice += switch (cheeseChoice) {
+            case 1 -> {
+                builder.setCheese("Mozzarella");
+                yield 0.0;
+            }
+            case 2 -> {
+                builder.setCheese("Cheddar");
+                yield 0.50;
+            }
+            case 3 -> {
+                builder.setCheese("Parmesan");
+                yield 1.0;
+            }
+            case 4 -> {
+                builder.setCheese("None");
+                yield 0.0;
+            }
+            default -> 0.0;
+        };
+
+        Pizza pizza = builder.build();
+
+        // Prompt the user to name their custom pizza
         System.out.print("Enter a name for your custom pizza: ");
         String pizzaName = scanner.nextLine();
         builder.setName(pizzaName); // Set the pizza name in the builder
-
 
 
         // Step 2: Quantity Selection
@@ -418,36 +417,45 @@ public class Main {
         PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
         paymentMethod.pay(totalPrice);
 
-            // Apply loyalty points
-            paymentMethod.applyLoyaltyPoints(userProfile, totalPrice);
+        // Apply loyalty points
+        paymentMethod.applyLoyaltyPoints(userProfile, totalPrice);
 
-            // Step 7: Redeem loyalty points
-            System.out.println("You have earned " + userProfile.getLoyaltyPoints() + " loyalty points!");
-            System.out.println("Do you want to redeem loyalty points? (yes/no): ");
-            String redeemChoice = scanner.nextLine();
-            if (redeemChoice.equalsIgnoreCase("yes")) {
-                if (userProfile.getLoyaltyPoints() >= 10) {
-                    System.out.println("You have redeemed 10 loyalty points for a free topping!");
-                    userProfile.redeemLoyaltyPoints(10);
+        // Step 7: Redeem loyalty points
+        System.out.println("You have earned " + userProfile.getLoyaltyPoints() + " loyalty points!");
+        System.out.println("Do you want to redeem loyalty points? (yes/no): ");
+        String redeemChoice = scanner.nextLine();
+        if (redeemChoice.equalsIgnoreCase("yes")) {
+            if (userProfile.getLoyaltyPoints() >= 10) {
+                System.out.println("You have redeemed 10 loyalty points for a free topping!");
+                userProfile.redeemLoyaltyPoints(10);
 
-                    // Free topping redemption
-                    System.out.println("Choose your free topping (1. Pepperoni, 2. Mushrooms, 3. Olives, 4. Bell Peppers): ");
-                    int freeToppingChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    switch (freeToppingChoice) {
-                        case 1: builder.addTopping("Pepperoni"); break;
-                        case 2: builder.addTopping("Mushrooms"); break;
-                        case 3: builder.addTopping("Olives"); break;
-                        case 4: builder.addTopping("Bell Peppers"); break;
-                        default: System.out.println("Invalid choice. No topping added.");
-                    }
-                } else {
-                    System.out.println("Sorry, you need at least 10 loyalty points to redeem for a free topping.");
+                // Free topping redemption
+                System.out.println("Choose your free topping (1. Pepperoni, 2. Mushrooms, 3. Olives, 4. Bell Peppers): ");
+                int freeToppingChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                switch (freeToppingChoice) {
+                    case 1:
+                        builder.addTopping("Pepperoni");
+                        break;
+                    case 2:
+                        builder.addTopping("Mushrooms");
+                        break;
+                    case 3:
+                        builder.addTopping("Olives");
+                        break;
+                    case 4:
+                        builder.addTopping("Bell Peppers");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. No topping added.");
                 }
+            } else {
+                System.out.println("Sorry, you need at least 10 loyalty points to redeem for a free topping.");
             }
+        }
 
 
-            // Step 8: Order Tracking
+        // Step 8: Order Tracking
         OrderTracker tracker = new OrderTracker();
         tracker.attach(new Customer(userProfile.getName()));
         tracker.setState("Order placed.");
@@ -472,7 +480,7 @@ public class Main {
         }
         System.out.println("Total Amount: $" + totalPrice);
 
-        }
+    }
 
     private static void handleSeasonalSpecialsAndPromotions(Scanner scanner) {
         System.out.println("\nSeasonal Specials and Promotions:");
@@ -488,22 +496,73 @@ public class Main {
     }
 
     private static void handleFeedbackAndRatings(Scanner scanner) {
-        System.out.println("\nFeedback and Ratings:");
-        System.out.println("Please rate your experience (1-5): ");
-        int rating = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-        if (rating < 1 || rating > 5) {
-            System.out.println("Invalid rating. Please provide a rating between 1 and 5.");
-        } else {
-            System.out.println("Thank you for your feedback! You rated us: " + rating + " stars.");
-            System.out.println("Would you like to leave additional comments? (yes/no): ");
-            String additionalComments = scanner.nextLine();
-            if (additionalComments.equalsIgnoreCase("yes")) {
-                System.out.println("Please enter your comments: ");
-                String comments = scanner.nextLine();
-                System.out.println("Thank you for your comments: " + comments);
-            }
+        System.out.println("\n=== Feedback and Ratings ===");
 
+        System.out.print("Please enter your name: ");
+        String customerName = scanner.nextLine();
+
+        double rating;
+        while (true) {
+            System.out.print("Please rate your experience (1-5): ");
+            rating = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
+            if (rating >= 1 && rating <= 5) {
+                break;
+            }
+            System.out.println("Invalid rating. Please provide a rating between 1 and 5.");
+        }
+
+        System.out.print("Would you like to leave additional comments? (yes/no): ");
+        String additionalComments = scanner.nextLine();
+
+        String comments = "";
+        if (additionalComments.equalsIgnoreCase("yes")) {
+            System.out.print("Please enter your comments: ");
+            comments = scanner.nextLine();
+        }
+
+        Feedback feedback = new Feedback(customerName, rating, comments);
+        feedbackList.add(feedback);
+
+        System.out.println("Feedback submitted successfully!");
+
+        // Ask to view feedback
+        System.out.println("\nWould you like to view feedback? (1. All Feedback, 2. Highly Rated Feedback, 3. None): ");
+        int feedbackOption = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (feedbackOption) {
+            case 1 -> showAllFeedback();
+            case 2 -> showHighlyRatedFeedback();
+            case 3 -> System.out.println("Thank you for your feedback!");
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+    private static void showAllFeedback() {
+        System.out.println("\n=== All Customer Feedback ===");
+        if (feedbackList.isEmpty()) {
+            System.out.println("No feedback available.");
+        } else {
+            for (Feedback feedback : feedbackList) {
+                System.out.println(feedback);
+                System.out.println("----------------------------");
+            }
+        }
+    }
+
+    private static void showHighlyRatedFeedback() {
+        System.out.println("\n=== Highly Rated Feedback (4+ stars) ===");
+        boolean found = false;
+        for (Feedback feedback : feedbackList) {
+            if (feedback.getRating() >= 4) {
+                System.out.println(feedback);
+                System.out.println("----------------------------");
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No highly-rated feedback available.");
         }
     }
 }
