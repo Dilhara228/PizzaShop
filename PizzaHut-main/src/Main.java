@@ -59,7 +59,7 @@ public class Main {
         scanner.close();
     }
 
-    private static void handleUserProfileAndFavorites(Scanner scanner, UserProfile userProfile) {
+    private static void handleUserProfileAndFavorites(Scanner scanner, UserProfile userProfile) throws InterruptedException {
         System.out.println("\nUser Profile and Favorites:");
 
         // Display User Profile
@@ -100,10 +100,94 @@ public class Main {
             } else {
                 System.out.println(pizzaName + " is already in your favorites.");
             }
+            // Reorder a favorite pizza
+            System.out.println("\nWould you like to reorder a favorite pizza? (yes/no): ");
+            String reorderFavorite = scanner.nextLine();
+            if (reorderFavorite.equalsIgnoreCase("yes")) {
+                // Display current favorite pizzas
+                if (userProfile.getFavorites().isEmpty()) {
+                    System.out.println("You have no favorite pizzas to reorder.");
+                } else {
+                    System.out.println("Your favorite pizzas:");
+                    for (int i = 0; i < userProfile.getFavorites().size(); i++) {
+                        System.out.println((i + 1) + ". " + userProfile.getFavorites().get(i));
+                    }
+
+                    // Choose a favorite pizza to reorder
+                    System.out.println("\nEnter the number of the pizza you want to reorder: ");
+                    int pizzaChoice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    if (pizzaChoice > 0 && pizzaChoice <= userProfile.getFavorites().size()) {
+                        String chosenPizza = userProfile.getFavorites().get(pizzaChoice - 1);
+                        System.out.println("You have selected: " + chosenPizza);
+
+                        // Enter quantity
+                        System.out.print("Enter the quantity: ");
+                        int quantity = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+
+                        // Choose delivery or pickup
+                        System.out.print("Would you like Delivery or Pickup? (Delivery/Pickup): ");
+                        String orderType = scanner.nextLine();
+
+                        String deliveryAddress = "";
+                        String phoneNumber = "";
+                        if (orderType.equalsIgnoreCase("Delivery")) {
+                            System.out.print("Enter your delivery address: ");
+                            deliveryAddress = scanner.nextLine();
+                            System.out.print("Enter your phone number: ");
+                            phoneNumber = scanner.nextLine();
+                        }
+
+                        // Payment process
+                        System.out.println("The price per pizza is $15. Total amount: $" + (15 * quantity));
+                        System.out.println("Choose payment method (1. Credit Card, 2. Digital Wallet): ");
+                        int paymentChoice = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+
+                        PaymentStrategy paymentMethod = paymentChoice == 1 ? new CreditCardPayment() : new DigitalWalletPayment();
+                        paymentMethod.pay(15.0 * quantity);
+
+                        // Order tracking
+                        System.out.println("\n========== Real-Time Order Tracking ==========");
+                        OrderTracker tracker = new OrderTracker();
+                        tracker.attach(new Customer(userProfile.getName()));
+
+                        tracker.setState("Order placed.");
+                        Thread.sleep(2000);
+                        tracker.setState("Order is being prepared.");
+                        Thread.sleep(3000);
+                        tracker.setState(orderType.equalsIgnoreCase("Delivery")
+                                ? "Order is out for delivery."
+                                : "Order is ready for pickup.");
+                        Thread.sleep(2000);
+
+                        // Invoice generation
+                        System.out.println("\n========== INVOICE ==========");
+                        String orderId = UUID.randomUUID().toString();
+                        String dateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+                        System.out.println("Order ID: " + orderId);
+                        System.out.println("Date: " + dateTime);
+                        System.out.println("Customer: " + userProfile.getName());
+                        System.out.println("Pizza: " + chosenPizza);
+                        System.out.println("Quantity: " + quantity);
+                        if (orderType.equalsIgnoreCase("Delivery")) {
+                            System.out.println("Delivery Address: " + deliveryAddress);
+                            System.out.println("Phone Number: " + phoneNumber);
+                        }
+                        System.out.println("Total Amount: $" + (15.0 * quantity));
+                        System.out.println("Thank you for ordering with us!");
+                    } else {
+                        System.out.println("Invalid choice. Returning to main menu.");
+                    }
+                }
+            }
         }
     }
 
-    private static void handlePizzaCustomization(Scanner scanner, UserProfile userProfile) throws InterruptedException {
+
+
+        private static void handlePizzaCustomization(Scanner scanner, UserProfile userProfile) throws InterruptedException {
         System.out.println("\nLet's customize your pizza!");
 
         // Step 1: Pizza Selection
